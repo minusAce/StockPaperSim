@@ -14,11 +14,14 @@ class AgentTeam:
         p = settings.prompt_dir
         self.quota = LLMRequestGate(settings, db)
         self.agents = {
-            "SCOUT": Agent("SCOUT", "Opportunity Hunter", p / "scout.yaml", settings.model_scout, settings, db, self.quota),
+            "SCOUT": Agent("SCOUT", "Opportunity Hunter", p / "scout.yaml", settings.model_scout, settings, db,
+                           self.quota),
             "MACRO": Agent("MACRO", "Market Regime", p / "macro.yaml", settings.model_macro, settings, db, self.quota),
-            "QUANT": Agent("QUANT", "Technical Analysis", p / "quant.yaml", settings.model_quant, settings, db, self.quota),
+            "QUANT": Agent("QUANT", "Technical Analysis", p / "quant.yaml", settings.model_quant, settings, db,
+                           self.quota),
             "NEWS": Agent("NEWS", "Catalysts", p / "news.yaml", settings.model_news, settings, db, self.quota),
-            "FINANCE": Agent("FINANCE", "Company Context", p / "finance.yaml", settings.model_finance, settings, db, self.quota),
+            "FINANCE": Agent("FINANCE", "Company Context", p / "finance.yaml", settings.model_finance, settings, db,
+                             self.quota),
             "PM": Agent("PM", "Portfolio Manager", p / "pm.yaml", settings.model_pm, settings, db, self.quota),
             "RISK": Agent("RISK", "Risk Review", p / "risk.yaml", settings.model_risk, settings, db, self.quota),
         }

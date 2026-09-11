@@ -115,14 +115,14 @@ class Agent:
     """
 
     def __init__(
-        self,
-        name: str,
-        role: str,
-        prompt_path: Path,
-        model: str,
-        settings: Settings,
-        db: Database,
-        gate: LLMRequestGate,
+            self,
+            name: str,
+            role: str,
+            prompt_path: Path,
+            model: str,
+            settings: Settings,
+            db: Database,
+            gate: LLMRequestGate,
     ):
         self.name = name
         self.role = role
@@ -197,10 +197,10 @@ class Agent:
             {
                 "role": "system",
                 "content": (
-                    self.prompt
-                    + "\n\nREQUIRED OUTPUT CONTRACT: Return ONLY one valid JSON object. "
-                    + "Do not use Markdown fences, prose, commentary, or tool calls. "
-                    + f"The JSON object MUST validate against this JSON Schema for {response_model.__name__}: {schema_text}"
+                        self.prompt
+                        + "\n\nREQUIRED OUTPUT CONTRACT: Return ONLY one valid JSON object. "
+                        + "Do not use Markdown fences, prose, commentary, or tool calls. "
+                        + f"The JSON object MUST validate against this JSON Schema for {response_model.__name__}: {schema_text}"
                 ),
             },
             {
@@ -267,7 +267,8 @@ class Agent:
                 except Exception as exc:
                     last_error = exc
                     if _is_openrouter_daily_quota_error(exc):
-                        logger.error("%s hit OpenRouter's free-model daily quota; stopping this AI cycle: %s", self.name, _compact_error(exc))
+                        logger.error("%s hit OpenRouter's free-model daily quota; stopping this AI cycle: %s",
+                                     self.name, _compact_error(exc))
                         raise OpenRouterQuotaExceeded(
                             f"OpenRouter daily quota exhausted: {_compact_error(exc)}"
                         ) from exc
@@ -315,7 +316,8 @@ class Agent:
         self._record_run(input_payload, True, parsed.model_dump())
         return parsed
 
-    def _record_run(self, input_payload: dict[str, Any], ok: bool, output: dict[str, Any], error: str | None = None) -> None:
+    def _record_run(self, input_payload: dict[str, Any], ok: bool, output: dict[str, Any],
+                    error: str | None = None) -> None:
         # Telemetry persistence must never turn a valid agent result into a failed
         # agent call. Trading state is authoritative; logging is best-effort.
         if not self.db:
@@ -332,7 +334,6 @@ class Agent:
             )
         except Exception as exc:
             logger.warning("%s agent_run telemetry failed: %s", self.name, _compact_error(exc))
-
 
 
 def _summarize(model: BaseModel) -> str:
@@ -462,8 +463,6 @@ def _parse_agent_response(response: Any, response_model: Type[BaseModel]) -> Bas
     ) from last_error
 
 
-
-
 def _is_transient_structured_response_error(exc: Exception) -> bool:
     """Identify empty/malformed structured output that is safe to retry once."""
     text = _compact_error(exc).lower()
@@ -476,11 +475,13 @@ def _is_transient_structured_response_error(exc: Exception) -> bool:
     )
     return any(marker in text for marker in transient_markers)
 
+
 def _is_openrouter_daily_quota_error(exc: Exception) -> bool:
     """Return True only for OpenRouter's account-level free-model daily quota error."""
     status = getattr(exc, "status_code", None)
     text = _compact_error(exc).lower()
     return status == 429 and "free-models-per-day" in text
+
 
 def _compact_error(exc: Exception | None) -> str:
     if exc is None:
@@ -490,10 +491,10 @@ def _compact_error(exc: Exception | None) -> str:
 
 
 def _build_agent_failure(
-    agent_name: str,
-    response_model: Type[BaseModel],
-    attempted: list[str],
-    last_error: Exception | None,
+        agent_name: str,
+        response_model: Type[BaseModel],
+        attempted: list[str],
+        last_error: Exception | None,
 ) -> str:
     attempts = ", ".join(attempted) if attempted else "none"
     detail = _compact_error(last_error)

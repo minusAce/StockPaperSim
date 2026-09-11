@@ -5,11 +5,11 @@ import logging
 import time
 from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone
+from io import StringIO
 from typing import Any, Awaitable, Callable
 
 import httpx
 import pandas as pd
-from io import StringIO
 from alpaca.data.enums import DataFeed, MostActivesBy
 from alpaca.data.historical.screener import ScreenerClient
 from alpaca.data.historical.stock import StockHistoricalDataClient
@@ -36,7 +36,8 @@ class AlpacaService:
         self.market = StockHistoricalDataClient(settings.alpaca_api_key, settings.alpaca_secret_key)
         self.screener = ScreenerClient(settings.alpaca_api_key, settings.alpaca_secret_key)
         self.feed = DataFeed.IEX if settings.alpaca_data_feed == "iex" else DataFeed.SIP
-        self.stream = StockDataStream(settings.alpaca_api_key, settings.alpaca_secret_key, feed=self.feed, data_timeout=180)
+        self.stream = StockDataStream(settings.alpaca_api_key, settings.alpaca_secret_key, feed=self.feed,
+                                      data_timeout=180)
         self.latest_quotes: dict[str, dict[str, float | None]] = {}
         self.latest_bars: dict[str, dict[str, Any]] = {}
         self.previous_bar: dict[str, dict[str, Any]] = {}
@@ -104,7 +105,8 @@ class AlpacaService:
         )
         most_data = most.model_dump() if hasattr(most, "model_dump") else dict(most)
         mover_data = movers.model_dump() if hasattr(movers, "model_dump") else dict(movers)
-        return list(most_data.get("most_actives", [])), {"gainers": mover_data.get("gainers", []), "losers": mover_data.get("losers", [])}
+        return list(most_data.get("most_actives", [])), {"gainers": mover_data.get("gainers", []),
+                                                         "losers": mover_data.get("losers", [])}
 
     async def sp500_symbols(self) -> list[str]:
         """Fetch the current S&P 500 security list; never hard-code constituents.
@@ -132,13 +134,16 @@ class AlpacaService:
                 if symbol and symbol not in symbols:
                     symbols.append(symbol)
             if len(symbols) < 450:
-                raise RuntimeError(f"S&P 500 source returned only {len(symbols)} symbols; refusing to replace the previous universe")
+                raise RuntimeError(
+                    f"S&P 500 source returned only {len(symbols)} symbols; refusing to replace the previous universe")
             tradable = [symbol for symbol in symbols if not self.assets or symbol in self.assets]
             if len(tradable) < 400:
-                raise RuntimeError(f"Only {len(tradable)} fetched S&P symbols are currently tradable in Alpaca; refusing to replace the previous universe")
+                raise RuntimeError(
+                    f"Only {len(tradable)} fetched S&P symbols are currently tradable in Alpaca; refusing to replace the previous universe")
             self._sp500_symbols = tradable
             self._sp500_loaded_at = time.time()
-            logger.info("Loaded dynamic S&P 500 universe: %s symbols from %s", len(tradable), self.settings.sp500_source_url)
+            logger.info("Loaded dynamic S&P 500 universe: %s symbols from %s", len(tradable),
+                        self.settings.sp500_source_url)
             return list(self._sp500_symbols)
 
     async def snapshots(self, symbols: list[str]) -> dict[str, dict[str, Any]]:
@@ -178,8 +183,10 @@ class AlpacaService:
         try:
             return list(result[symbol.upper()])
         except Exception:
-            try: return list(result[symbol])
-            except Exception: return []
+            try:
+                return list(result[symbol])
+            except Exception:
+                return []
 
     async def features(self, symbol: str, daily_dollar_volume: float | None = None) -> dict[str, Any]:
         symbol = symbol.upper()
@@ -225,7 +232,8 @@ class AlpacaService:
         try:
             if symbol in {"^GSPC", "GSPC", "SP500", "S&P500", "S&P 500"}:
                 url = "https://query1.finance.yahoo.com/v8/finance/chart/%5EGSPC"
-                response = await self.http.get(url, params={"range": "1d", "interval": "1m"}, headers={"User-Agent": "StockPaperSim/1.0"})
+                response = await self.http.get(url, params={"range": "1d", "interval": "1m"},
+                                               headers={"User-Agent": "StockPaperSim/1.0"})
                 response.raise_for_status()
                 payload = response.json().get("chart", {}).get("result", [{}])[0] or {}
                 meta = payload.get("meta", {}) or {}
@@ -245,7 +253,8 @@ class AlpacaService:
                     "day_change_pct": change_pct,
                     "previous_close": prev_close,
                     "session_open": session_open,
-                    "direction": "UP" if (change_pct is not None and change_pct >= 0) else "DOWN" if change_pct is not None else "UNKNOWN",
+                    "direction": "UP" if (
+                            change_pct is not None and change_pct >= 0) else "DOWN" if change_pct is not None else "UNKNOWN",
                 }
 
             snap = await self.snapshot(symbol)
@@ -273,14 +282,19 @@ class AlpacaService:
                 "day_change_pct": change_pct,
                 "previous_close": prev_close,
                 "session_open": open_price,
-                "direction": "UP" if (change_pct is not None and change_pct >= 0) else "DOWN" if change_pct is not None else "UNKNOWN",
+                "direction": "UP" if (
+                        change_pct is not None and change_pct >= 0) else "DOWN" if change_pct is not None else "UNKNOWN",
             }
         except Exception as exc:
             logger.warning("Benchmark lookup failed for %s: %s", symbol, exc)
-            return {"symbol": "S&P 500" if symbol in {"^GSPC", "GSPC", "SP500", "S&P500", "S&P 500"} else symbol, "underlying_symbol": symbol, "price": None, "day_change": None, "day_change_pct": None, "direction": "UNKNOWN", "error": str(exc)}
+            return {"symbol": "S&P 500" if symbol in {"^GSPC", "GSPC", "SP500", "S&P500", "S&P 500"} else symbol,
+                    "underlying_symbol": symbol, "price": None, "day_change": None, "day_change_pct": None,
+                    "direction": "UNKNOWN", "error": str(exc)}
 
     async def news(self, symbol: str, limit: int = 5) -> list[dict[str, Any]]:
-        response = await self.http.get(f"{self.BASE_DATA}/v1beta1/news", headers=self.headers, params={"symbols": symbol.upper(), "limit": limit, "sort": "desc", "include_content": "false"})
+        response = await self.http.get(f"{self.BASE_DATA}/v1beta1/news", headers=self.headers,
+                                       params={"symbols": symbol.upper(), "limit": limit, "sort": "desc",
+                                               "include_content": "false"})
         response.raise_for_status()
         return response.json().get("news", [])
 
@@ -291,7 +305,9 @@ class AlpacaService:
         bars = await self.bars(symbol, limit=limit)
         result = []
         for b in bars:
-            result.append({"timestamp": str(b.timestamp), "open": float(b.open), "high": float(b.high), "low": float(b.low), "close": float(b.close), "volume": float(b.volume)})
+            result.append(
+                {"timestamp": str(b.timestamp), "open": float(b.open), "high": float(b.high), "low": float(b.low),
+                 "close": float(b.close), "volume": float(b.volume)})
         return result[-limit:]
 
     async def submit_market_order(self, symbol: str, side: str, qty: float, client_order_id: str):
@@ -330,24 +346,31 @@ class AlpacaService:
     async def stop_trade_stream(self):
         if not self._trade_stream_running: return
         self._trade_stream_running = False
-        try: await self.trade_stream.stop_ws()
-        except Exception: logger.exception("Failed stopping trading stream")
+        try:
+            await self.trade_stream.stop_ws()
+        except Exception:
+            logger.exception("Failed stopping trading stream")
         if self._trade_stream_task:
-            try: await asyncio.wait_for(self._trade_stream_task, timeout=10)
-            except Exception: self._trade_stream_task.cancel()
+            try:
+                await asyncio.wait_for(self._trade_stream_task, timeout=10)
+            except Exception:
+                self._trade_stream_task.cancel()
 
     async def _quote_handler(self, quote) -> None:
         symbol = quote.symbol.upper()
-        bid = float(quote.bid_price or 0); ask = float(quote.ask_price or 0)
+        bid = float(quote.bid_price or 0);
+        ask = float(quote.ask_price or 0)
         mid = (bid + ask) / 2 if bid and ask else None
         spread_pct = ((ask - bid) / mid * 100) if mid else None
         self.latest_quotes[symbol] = {"bid": bid, "ask": ask, "mid": mid, "spread_pct": spread_pct}
         if self._on_event:
-            await self._on_event("quote", {"symbol": symbol, "bid": bid, "ask": ask, "mid": mid, "spread_pct": spread_pct})
+            await self._on_event("quote",
+                                 {"symbol": symbol, "bid": bid, "ask": ask, "mid": mid, "spread_pct": spread_pct})
 
     async def _bar_handler(self, bar) -> None:
         symbol = bar.symbol.upper()
-        payload = {"symbol": symbol, "open": float(bar.open), "high": float(bar.high), "low": float(bar.low), "close": float(bar.close), "volume": float(bar.volume), "timestamp": str(bar.timestamp)}
+        payload = {"symbol": symbol, "open": float(bar.open), "high": float(bar.high), "low": float(bar.low),
+                   "close": float(bar.close), "volume": float(bar.volume), "timestamp": str(bar.timestamp)}
         self.previous_bar[symbol] = self.latest_bars.get(symbol, {})
         self.latest_bars[symbol] = payload
         self.bar_history[symbol].append(payload)
@@ -355,23 +378,31 @@ class AlpacaService:
 
     async def update_subscriptions(self, symbols: list[str]) -> None:
         target = {s.upper() for s in symbols if s}
-        add = sorted(target - self._subscribed); remove = sorted(self._subscribed - target)
+        add = sorted(target - self._subscribed);
+        remove = sorted(self._subscribed - target)
         if add:
             try:
                 self.stream.subscribe_quotes(self._quote_handler, *add)
                 self.stream.subscribe_bars(self._bar_handler, *add)
-            except Exception: logger.exception("Failed to subscribe %s", add)
+            except Exception:
+                logger.exception("Failed to subscribe %s", add)
         if remove:
             try:
-                self.stream.unsubscribe_quotes(*remove); self.stream.unsubscribe_bars(*remove)
-            except Exception: logger.exception("Failed to unsubscribe %s", remove)
+                self.stream.unsubscribe_quotes(*remove);
+                self.stream.unsubscribe_bars(*remove)
+            except Exception:
+                logger.exception("Failed to unsubscribe %s", remove)
         self._subscribed = target
 
     async def stop_stream(self):
         if not self._stream_running: return
         self._stream_running = False
-        try: await self.stream.stop_ws()
-        except Exception: logger.exception("Failed stopping market stream")
+        try:
+            await self.stream.stop_ws()
+        except Exception:
+            logger.exception("Failed stopping market stream")
         if self._stream_task:
-            try: await asyncio.wait_for(self._stream_task, timeout=10)
-            except Exception: self._stream_task.cancel()
+            try:
+                await asyncio.wait_for(self._stream_task, timeout=10)
+            except Exception:
+                self._stream_task.cancel()

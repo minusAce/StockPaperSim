@@ -28,7 +28,8 @@ class RiskEngine:
         self.manual_pause = paused
         if self.db: self.db.set_control("pause", paused)
 
-    def validate(self, proposal: dict[str, Any], portfolio: dict[str, Any], open_order_count: int) -> tuple[bool, str, dict[str, Any]]:
+    def validate(self, proposal: dict[str, Any], portfolio: dict[str, Any], open_order_count: int) -> tuple[
+        bool, str, dict[str, Any]]:
         symbol = str(proposal.get("symbol", "")).upper()
         action = str(proposal.get("action", "")).upper()
         try:
@@ -62,24 +63,57 @@ class RiskEngine:
         if len(recent) >= self.settings.max_symbol_orders_per_hour:
             return False, "SYMBOL_ORDER_RATE_LIMIT", {}
 
+        daily_loss_limit = abs(self.settings.max_daily_loss_pct)
+        emergency_loss_limit = abs(self.settings.emergency_daily_loss_pct)
+        daily_loss_buy_scale = 1.0
+
         if action == "BUY":
             desired_notional = max(0.0, float(proposal.get("target_weight", 0)) - current_weight) * equity
             desired_notional = min(desired_notional, self.settings.max_order_notional)
-            qty = math.floor(min(qty, desired_notional / price if price else 0.0))  # whole shares only — some symbols reject fractional orders
-            if qty * price < self.settings.min_order_notional: return False, "ORDER_TOO_SMALL", {}
-            if qty < self.settings.min_order_qty: return False, "QUANTITY_TOO_SMALL", {}
-            if qty * price > cash: return False, "INSUFFICIENT_CASH", {}
+            qty = math.floor(min(qty, desired_notional / price if price else 0.0))
+
+            # Daily loss is a graduated new-risk control. It never overrides the PM
+            # proposal by itself until the emergency threshold is reached. Between
+            # the caution and emergency thresholds, scale only the NEW BUY quantity.
+            loss = max(0.0, -daily_loss_pct)
+            if loss >= emergency_loss_limit:
+                return False, "EMERGENCY_DAILY_LOSS_LIMIT", {}
+            if loss > daily_loss_limit:
+                daily_loss_buy_scale = (emergency_loss_limit - loss) / (emergency_loss_limit - daily_loss_limit)
+                daily_loss_buy_scale = max(0.0, min(1.0, daily_loss_buy_scale))
+                qty = math.floor(qty * daily_loss_buy_scale)
+
+            if qty < self.settings.min_order_qty:
+                return False, ("DAILY_LOSS_NEW_RISK_TOO_LARGE" if loss > daily_loss_limit
+                               else "QUANTITY_TOO_SMALL"), {
+                    "quantity": qty,
+                    "daily_loss_buy_scale": daily_loss_buy_scale,
+                }
+            if qty * price < self.settings.min_order_notional:
+                return False, ("DAILY_LOSS_ORDER_TOO_SMALL" if loss > daily_loss_limit
+                               else "ORDER_TOO_SMALL"), {
+                    "quantity": qty,
+                    "daily_loss_buy_scale": daily_loss_buy_scale,
+                }
+            if qty * price > cash:
+                return False, "INSUFFICIENT_CASH", {"daily_loss_buy_scale": daily_loss_buy_scale}
             projected_weight = current_weight + (qty * price / equity)
-            if projected_weight > self.settings.max_position_weight + 1e-9: return False, "POSITION_WEIGHT_LIMIT", {}
+            if projected_weight > self.settings.max_position_weight + 1e-9:
+                return False, "POSITION_WEIGHT_LIMIT", {"daily_loss_buy_scale": daily_loss_buy_scale}
         else:
-            qty = math.floor(min(qty, max(current_qty, 0.0)))  # whole shares only — never sell more than we hold
+            target_weight = float(proposal.get("target_weight", current_weight) or 0)
+            if target_weight < -1e-9 or target_weight > current_weight + 1e-9:
+                return False, "INVALID_SELL_TARGET_WEIGHT", {}
+            # The PM may request any sell size, including a complete exit. The only
+            # quantity guard here is mechanical: never submit more shares than held.
+            qty = math.floor(min(qty, max(current_qty, 0.0)))
             if qty < self.settings.min_order_qty: return False, "NOTHING_TO_SELL", {}
             if qty * price < self.settings.min_order_notional: return False, "ORDER_TOO_SMALL", {}
 
-        if daily_loss_pct <= -abs(self.settings.max_daily_loss_pct):
-            return False, "DAILY_LOSS_LIMIT", {}
-
-        return True, "APPROVED", {"quantity": qty}
+        return True, "APPROVED", {
+            "quantity": qty,
+            "daily_loss_buy_scale": daily_loss_buy_scale if action == "BUY" else None,
+        }
 
     def record_order(self, symbol: str):
         self.order_times[symbol.upper()].append(time.time())

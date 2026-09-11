@@ -86,6 +86,7 @@ class PMProposal(StrictModel):
     urgency: Literal["LOW", "MEDIUM", "HIGH"]
     thesis: str
     invalidation: str
+    sell_rationale: str = ""
     max_price_slippage_pct: float = Field(ge=0, le=0.05)
 
 

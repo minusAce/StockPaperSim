@@ -62,7 +62,8 @@ class Settings:
     # fallback (same as before), while agents WITH an override automatically
     # gain the global default as a safety net. Set it explicitly to any other
     # free OpenRouter model ID to enable real model-level fallback everywhere.
-    model_fallback: str = os.getenv("MODEL_FALLBACK", os.getenv("MODEL_DEFAULT", "nvidia/nemotron-3-ultra-550b-a55b:free"))
+    model_fallback: str = os.getenv("MODEL_FALLBACK",
+                                    os.getenv("MODEL_DEFAULT", "nvidia/nemotron-3-ultra-550b-a55b:free"))
     llm_daily_request_budget: int = env_int("LLM_DAILY_REQUEST_BUDGET", 50)
     llm_min_request_interval_seconds: float = env_float("LLM_MIN_REQUEST_INTERVAL_SECONDS", 3.0)
     site_url: str = os.getenv("SITE_URL", "http://localhost:8000")
@@ -97,13 +98,16 @@ class Settings:
 
     max_position_weight: float = env_float("MAX_POSITION_WEIGHT", 0.10)
     max_order_notional: float = env_float("MAX_ORDER_NOTIONAL", 5000.0)
+    # Daily loss is a graduated new-risk control. MAX_DAILY_LOSS_PCT is the
+    # caution threshold; EMERGENCY_DAILY_LOSS_PCT is the hard no-new-exposure cutoff.
     max_daily_loss_pct: float = env_float("MAX_DAILY_LOSS_PCT", 0.03)
+    emergency_daily_loss_pct: float = env_float("EMERGENCY_DAILY_LOSS_PCT", 0.06)
     max_total_open_orders: int = env_int("MAX_TOTAL_OPEN_ORDERS", 10)
     max_symbol_orders_per_hour: int = env_int("MAX_SYMBOL_ORDERS_PER_HOUR", 3)
     min_confidence: float = env_float("MIN_CONFIDENCE", 0.65)
     min_liquidity_dollars: float = env_float("MIN_LIQUIDITY_DOLLARS", 250_000.0)
     min_order_notional: float = env_float("MIN_ORDER_NOTIONAL", 25.0)
-    min_order_qty: float = env_float("MIN_ORDER_QTY", 0.01)
+    min_order_qty: float = env_float("MIN_ORDER_QTY", 1.0)
 
     prompt_dir: Path = Path(os.getenv("PROMPT_DIR", str(ROOT / "config" / "agents")))
     database_url: str = os.getenv("DATABASE_URL", "postgresql+psycopg://trading:trading@localhost:5432/trading_floor")
@@ -116,6 +120,10 @@ class Settings:
     frontend_dist: Path = ROOT / "frontend" / "dist"
 
     def validate(self) -> None:
+        if self.max_daily_loss_pct <= 0:
+            raise RuntimeError("MAX_DAILY_LOSS_PCT must be greater than 0.")
+        if self.emergency_daily_loss_pct <= self.max_daily_loss_pct:
+            raise RuntimeError("EMERGENCY_DAILY_LOSS_PCT must be greater than MAX_DAILY_LOSS_PCT.")
         if not self.alpaca_api_key or not self.alpaca_secret_key:
             raise RuntimeError("ALPACA_API_KEY and ALPACA_SECRET_KEY are required.")
         if not self.openrouter_api_key:
