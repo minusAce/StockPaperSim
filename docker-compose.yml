@@ -1,0 +1,38 @@
+services:
+  postgres:
+    image: postgres:17
+    restart: "no"
+    environment:
+      POSTGRES_DB: trading_floor
+      POSTGRES_USER: trading
+      POSTGRES_PASSWORD: trading
+    ports:
+      - "5432:5432"
+    volumes:
+      - trading_floor_pg:/var/lib/postgresql/data
+    labels:
+      stocksim.kill-group: "true"
+
+  app:
+    build: .
+    restart: "no"
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: postgresql+psycopg://trading:trading@postgres:5432/trading_floor
+      HOST: 0.0.0.0
+      PORT: 8000
+      START_AUTOPILOT: "false"
+      RESET_RUNTIME_CONTROLS_ON_START: "true"
+      BENCHMARK_SYMBOL: "^GSPC"
+    ports:
+      - "8000:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+      stocksim.kill-group: "true"
+
+volumes:
+  trading_floor_pg:
