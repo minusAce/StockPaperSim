@@ -65,7 +65,7 @@ class TradingEngine:
         self._task = asyncio.create_task(self._loop())
         self._display_refresh_task = asyncio.create_task(self._display_refresh_loop())
         await self._publish("system", {"level": "INFO",
-                                       "message": f"Trading floor online — paper mode — autopilot={'ON' if self.autopilot else 'OFF'}"})
+                                       "message": f"StockPaperSim online — paper mode — autopilot={'ON' if self.autopilot else 'OFF'}"})
 
     async def stop(self):
         self.running = False

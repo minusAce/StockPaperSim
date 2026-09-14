@@ -162,6 +162,7 @@ export default function App() {
         }
     }
     const navPnlClass = Number(portfolio.daily_pnl || 0) >= 0 ? 'up' : 'down'
+    const totalPnl = Number(portfolio.pnl || 0)
     const quota = status.ai_quota || {used: 0, budget: 0, remaining: 0}
     const autopilotOn = Boolean(status.autopilot)
 
@@ -217,7 +218,8 @@ export default function App() {
             <div className="brand">StockPaperSim</div>
             <div className="topbar-center">
                 <Metric label="NAV" value={money(portfolio.equity)} className="nav-value"/>
-                <Metric label="DAY P&L" value={money(portfolio.daily_pnl)} className={navPnlClass}/>
+                <Metric label="DAY P/L" value={money(portfolio.daily_pnl)} className={`pnl-value ${navPnlClass}`}/>
+                <Metric label="P/L" value={money(totalPnl)} className={`pnl-value ${totalPnl >= 0 ? 'up' : 'down'}`}/>
                 <Metric label="ORDERS" value={status.db_counts?.orders ?? 0} className="orders-value"/>
                 <Metric label="FILLED" value={performance.filled_orders ?? 0} className="filled-value"/>
             </div>
@@ -446,25 +448,15 @@ function DecisionModal({decision, onClose}) {
                 <span
                     className={`decision-status-pill ${d.approved ? 'ok' : 'bad'}`}>{d.approved ? 'APPROVED' : 'REJECTED'}</span>
             </div>
-            <div className={`decision-modal-meta ${d.action === 'SELL' ? 'sell-meta' : ''}`}>
+            <div className="decision-modal-meta">
                 <div><span>WHEN</span>{dt ? <><b>{fmtDateFull(dt)}</b><small>{fmtTimeFull(dt)}</small></> : <b>—</b>}
                 </div>
                 <div><span>CONFIDENCE</span><b className={d.approved ? 'ok' : 'bad'}>{confPct(d.confidence)}</b></div>
-                {d.action === 'SELL' && <div>
-                    <span>CURRENT WEIGHT</span><b>{d.current_weight == null ? '—' : `${(Number(d.current_weight) * 100).toFixed(2)}%`}</b>
-                </div>}
-                {d.action === 'SELL' && <div><span>TARGET WEIGHT</span><b
-                    className={Number(d.target_weight) === 0 ? 'bad' : ''}>{d.target_weight == null ? '—' : `${(Number(d.target_weight) * 100).toFixed(2)}%`}</b>
-                </div>}
             </div>
             <div className="decision-modal-thesis">
                 <span className="decision-modal-label">THESIS</span>
                 <p>{thesisText}</p>
             </div>
-            {d.action === 'SELL' && d.sell_rationale && <div className="decision-modal-sell">
-                <span className="decision-modal-label">SELL RATIONALE</span>
-                <p>{d.sell_rationale}</p>
-            </div>}
             {showRejection && <div className="decision-modal-rejection">
                 <span className="decision-modal-label">RISK VERDICT</span>
                 <p>{prettyReason(d.rejection_reason)}</p>

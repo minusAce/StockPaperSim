@@ -3,13 +3,13 @@ services:
     image: postgres:17
     restart: "no"
     environment:
-      POSTGRES_DB: trading_floor
+      POSTGRES_DB: db
       POSTGRES_USER: trading
       POSTGRES_PASSWORD: trading
     ports:
       - "5432:5432"
     volumes:
-      - trading_floor_pg:/var/lib/postgresql/data
+      - db:/var/lib/postgresql/data
     labels:
       stocksim.kill-group: "true"
 
@@ -21,7 +21,7 @@ services:
     env_file:
       - .env
     environment:
-      DATABASE_URL: postgresql+psycopg://trading:trading@postgres:5432/trading_floor
+      DATABASE_URL: postgresql+psycopg://trading:trading@postgres:5432/db
       HOST: 0.0.0.0
       PORT: 8000
       START_AUTOPILOT: "false"
@@ -35,4 +35,4 @@ services:
       stocksim.kill-group: "true"
 
 volumes:
-  trading_floor_pg:
+  db:

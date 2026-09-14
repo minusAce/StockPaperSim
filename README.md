@@ -30,7 +30,7 @@ must be free OpenRouter model IDs (a `:free` suffix, or `openrouter/free`).
 ## Runtime database and AI session behavior
 
 Docker Compose runs the application against the PostgreSQL service (`DATABASE_URL=postgresql+psycopg://...`). The
-application uses PostgreSQL in Docker, persisted in the `trading_floor_pg` Docker volume. There is no checked-in SQLite
+application uses PostgreSQL in Docker, persisted in the `db` Docker volume. There is no checked-in SQLite
 trading database.
 
 The scanner uses a dynamically fetched S&P 500 constituent universe as its stable core. Membership is refreshed every 24

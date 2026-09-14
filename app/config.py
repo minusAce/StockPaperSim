@@ -110,7 +110,7 @@ class Settings:
     min_order_qty: float = env_float("MIN_ORDER_QTY", 1.0)
 
     prompt_dir: Path = Path(os.getenv("PROMPT_DIR", str(ROOT / "config" / "agents")))
-    database_url: str = os.getenv("DATABASE_URL", "postgresql+psycopg://trading:trading@localhost:5432/trading_floor")
+    database_url: str = os.getenv("DATABASE_URL", "postgresql+psycopg://trading:trading@localhost:5432/db")
     history_bars: int = env_int("HISTORY_BARS", 180)
     chart_bars: int = env_int("CHART_BARS", 120)
 
