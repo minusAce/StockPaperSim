@@ -16,10 +16,15 @@ class ExecutionEngine:
         client_order_id = f"aitf-{execution_id[:20]}"
         try:
             order = await self.alpaca.submit_market_order(symbol, action, qty, client_order_id)
-            data = order.model_dump() if hasattr(order, "model_dump") else dict(order)
+            data = order.model_dump(mode="json") if hasattr(order, "model_dump") else dict(order)
+            # alpaca-py's OrderStatus is an Enum; str() on it yields "OrderStatus.FILLED"
+            # instead of the underlying value. Unwrap .value so downstream consumers
+            # (DB, API, UI) always see the plain status string, e.g. "filled".
+            raw_status = data.get("status")
+            status_value = raw_status.value if hasattr(raw_status, "value") else raw_status
             result = ExecutionResult(ok=True, symbol=symbol, action=action, qty=qty,
                                      order_id=str(data.get("id")) if data.get("id") else None,
-                                     status=str(data.get("status")) if data.get("status") else None, error=None)
+                                     status=str(status_value) if status_value else None, error=None)
             self.db.order({"id": execution_id, "symbol": symbol, "action": action, "qty": qty, "status": result.status,
                            "alpaca_order_id": result.order_id, "payload": data})
             return result

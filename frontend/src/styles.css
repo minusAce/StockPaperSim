@@ -182,11 +182,11 @@ button {
     color: var(--green)
 }
 
-.metric.up b {
+.metric b.pnl-value.up {
     color: var(--green)
 }
 
-.metric.down b {
+.metric b.pnl-value.down {
     color: var(--red)
 }
 
@@ -400,7 +400,8 @@ button {
 
 .panel-scroll {
     min-height: 0;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: #2a4554 transparent;
     padding-right: 0
@@ -429,18 +430,6 @@ button {
     grid-template-columns:1fr 1fr .9fr 1.2fr .7fr;
     gap: 9px;
     align-items: center
-}
-
-.monitor-head {
-    position: sticky;
-    top: 0;
-    z-index: 1;
-    padding: 0 10px 8px;
-    background: #0d1922;
-    color: #718994;
-    font-size: .78rem;
-    font-weight: 850;
-    letter-spacing: .06em
 }
 
 .monitor-row {
@@ -530,7 +519,7 @@ button {
 }
 
 .position-head, .pos-row {
-    grid-template-columns:minmax(54px, .8fr) minmax(54px, .72fr) minmax(90px, 1.05fr) minmax(82px, 1fr) minmax(82px, 1fr) minmax(74px, .9fr);
+    grid-template-columns:minmax(0, .8fr) minmax(0, .72fr) minmax(0, 1.05fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, .9fr);
     gap: 8px
 }
 
@@ -617,7 +606,8 @@ button {
     flex: 1;
     min-height: 0;
     padding: 0;
-    overflow: auto
+    overflow-y: auto;
+    overflow-x: hidden
 }
 
 .ok {
@@ -1007,12 +997,12 @@ button {
 }
 
 .decision-head, .decision-row {
-    grid-template-columns:minmax(70px, 1fr) minmax(76px, 1fr) minmax(64px, 1fr) minmax(100px, 1fr);
+    grid-template-columns:minmax(0, 1fr) minmax(0, 1fr) minmax(0, .85fr) minmax(0, 1.3fr);
     gap: 18px
 }
 
 .order-head, .order-row {
-    grid-template-columns:76px 68px 62px 56px minmax(58px, 1fr)
+    grid-template-columns:minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, .8fr) minmax(0, .7fr) minmax(0, 1.1fr)
 }
 
 .position-head span, .pos-row span, .pos-row b {
@@ -1031,27 +1021,27 @@ button {
     background: rgba(13, 28, 37, .28)
 }
 
-.decision-row span, .decision-row b, .order-row span, .order-row b {
+.decision-row span, .decision-row b, .order-row span, .order-row b, .order-row em {
     min-width: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis
 }
 
-.decision-row .decision-action {
+.decision-row .decision-action, .order-row .order-side {
     font-weight: 900;
     letter-spacing: .02em
 }
 
-.decision-row .decision-action.buy {
+.decision-row .decision-action.buy, .order-row .order-side.buy {
     color: var(--green)
 }
 
-.decision-row .decision-action.sell {
+.decision-row .decision-action.sell, .order-row .order-side.sell {
     color: var(--red)
 }
 
-.decision-row .decision-action.hold {
+.decision-row .decision-action.hold, .order-row .order-side.hold {
     color: var(--amber)
 }
 
@@ -1137,18 +1127,19 @@ button {
     }
 
     .decision-head, .decision-row {
-        grid-template-columns:minmax(60px, 1fr) minmax(70px, 1fr) minmax(58px, 1fr) minmax(90px, 1fr);
+        grid-template-columns:minmax(0, 1fr) minmax(0, 1fr) minmax(0, .85fr) minmax(0, 1.3fr);
         gap: 14px
     }
 }
 
 @media (max-width: 900px) {
-    .positions-list {
-        overflow: auto
+    .position-head > *:nth-child(4), .pos-row > *:nth-child(4),
+    .position-head > *:nth-child(5), .pos-row > *:nth-child(5) {
+        display: none
     }
 
     .position-head, .pos-row {
-        min-width: 520px
+        grid-template-columns:minmax(0, .8fr) minmax(0, .65fr) minmax(0, 1.1fr) minmax(0, .9fr)
     }
 
     .portfolio-controls-stack {
@@ -1163,7 +1154,7 @@ button {
     }
 
     .decision-head, .decision-row {
-        grid-template-columns:minmax(56px, 1fr) minmax(66px, 1fr) minmax(56px, 1fr) minmax(80px, 1fr);
+        grid-template-columns:minmax(0, 1fr) minmax(0, 1fr) minmax(0, .85fr) minmax(0, 1.3fr);
         gap: 10px
     }
 }

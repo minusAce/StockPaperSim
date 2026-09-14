@@ -19,6 +19,12 @@ const fmtTimeFull = dt => dt.toLocaleTimeString('en-US', {
     hour12: true
 })
 const prettyReason = s => String(s || '').split('_').filter(Boolean).map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(' ') || '—'
+// Strips any enum-style prefix (e.g. "OrderStatus.FILLED" -> "FILLED") before
+// humanizing, so both legacy and clean status values render the same way.
+const prettyStatus = s => {
+    const raw = String(s || '').split('.').pop()
+    return raw.split('_').filter(Boolean).map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(' ') || '—'
+}
 
 
 function StaffScene({agents}) {
@@ -162,7 +168,9 @@ export default function App() {
         }
     }
     const navPnlClass = Number(portfolio.daily_pnl || 0) >= 0 ? 'up' : 'down'
-    const totalPnl = Number(portfolio.pnl || 0)
+    // portfolio.pnl is never sent by the API (only daily_pnl is) — that's why this
+    // was frozen at $0.00. Total open P/L is the sum of each position's unrealized P/L.
+    const totalPnl = (portfolio.positions || []).reduce((sum, p) => sum + Number(p.unrealized_pl || 0), 0)
     const quota = status.ai_quota || {used: 0, budget: 0, remaining: 0}
     const autopilotOn = Boolean(status.autopilot)
 
@@ -282,7 +290,7 @@ export default function App() {
                     </div>
                 </div>
                 <div className="panel-scroll monitor-table">
-                    <div className="monitor-head">
+                    <div className="table-head monitor-head">
                         <span>SYMBOL</span><span>PRICE</span><span>TODAY</span><span>VOLUME</span><span>SCORE</span>
                     </div>
                     {candidates.slice(0, 18).map(c => {
@@ -391,7 +399,8 @@ export default function App() {
                     <div className="table-head order-head">
                         <span>TIME</span><span>SYMBOL</span><span>SIDE</span><span>QTY</span><span>STATUS</span></div>
                     {orders.slice(0, 18).map((o, i) => <div className="order-row" key={o.id || i}><TimeCell
-                        ts={o.timestamp}/><b>{o.symbol || '—'}</b><span>{o.action || '—'}</span><span>{Number(o.qty || 0).toLocaleString()}</span><em>{o.status || '—'}</em>
+                        ts={o.timestamp}/><b>{o.symbol || '—'}</b><span
+                        className={`order-side ${(o.action || '').toLowerCase()}`}>{o.action || '—'}</span><span>{Number(o.qty || 0).toLocaleString()}</span><em>{prettyStatus(o.status)}</em>
                     </div>)}
                     {!orders.length && <div className="empty">NO ORDERS YET</div>}
                 </div>

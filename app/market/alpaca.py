@@ -340,7 +340,7 @@ class AlpacaService:
         self._trade_stream_task = asyncio.create_task(asyncio.to_thread(self.trade_stream.run))
 
     async def _trade_update_handler(self, update) -> None:
-        data = update.model_dump() if hasattr(update, "model_dump") else getattr(update, "__dict__", {})
+        data = update.model_dump(mode="json") if hasattr(update, "model_dump") else getattr(update, "__dict__", {})
         if self._on_trade_event: await self._on_trade_event(data)
 
     async def stop_trade_stream(self):
