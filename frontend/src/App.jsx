@@ -400,7 +400,8 @@ export default function App() {
                         <span>TIME</span><span>SYMBOL</span><span>SIDE</span><span>QTY</span><span>STATUS</span></div>
                     {orders.slice(0, 18).map((o, i) => <div className="order-row" key={o.id || i}><TimeCell
                         ts={o.timestamp}/><b>{o.symbol || '—'}</b><span
-                        className={`order-side ${(o.action || '').toLowerCase()}`}>{o.action || '—'}</span><span>{Number(o.qty || 0).toLocaleString()}</span><em>{prettyStatus(o.status)}</em>
+                        className={`order-side ${(o.action || '').toLowerCase()}`}>{o.action || '—'}</span><span>{Number(o.qty || 0).toLocaleString()}</span><span
+                        className="order-status">{prettyStatus(o.status)}</span>
                     </div>)}
                     {!orders.length && <div className="empty">NO ORDERS YET</div>}
                 </div>
@@ -445,7 +446,6 @@ function DecisionModal({decision, onClose}) {
     const dt = parseTs(d.timestamp)
     const action = (d.action || '—').toUpperCase()
     const thesisText = d.thesis || d.reason || d.rejection_reason || 'No thesis was recorded for this decision.'
-    const showRejection = !d.approved && d.rejection_reason
 
     return <div className="modal-overlay" onClick={onClose}>
         <div className="modal-card decision-modal" role="dialog" aria-modal="true"
@@ -464,16 +464,12 @@ function DecisionModal({decision, onClose}) {
             <div className="decision-modal-meta">
                 <div><span>WHEN</span>{dt ? <b>{fmtDateFull(dt)} {fmtTimeFull(dt)}</b> : <b>—</b>}
                 </div>
-                <div><span>CONFIDENCE</span><b className={d.approved ? 'ok' : 'bad'}>{confPct(d.confidence)}</b></div>
+                <div><span>CONFIDENCE</span><b>{confPct(d.confidence)}</b></div>
             </div>
             <div className="decision-modal-thesis">
                 <span className="decision-modal-label">THESIS</span>
                 <p>{thesisText}</p>
             </div>
-            {showRejection && <div className="decision-modal-rejection">
-                <span className="decision-modal-label">RISK VERDICT</span>
-                <p>{prettyReason(d.rejection_reason)}</p>
-            </div>}
         </div>
     </div>
 }

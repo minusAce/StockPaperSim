@@ -443,6 +443,10 @@ button {
     transition: border-color .16s ease, background .16s ease, box-shadow .16s ease
 }
 
+.monitor-row:first-child {
+    margin-top: 8px
+}
+
 .monitor-row b {
     color: #f0f5f7;
     font-size: .95rem
@@ -1021,7 +1025,7 @@ button {
     background: rgba(13, 28, 37, .28)
 }
 
-.decision-row span, .decision-row b, .order-row span, .order-row b, .order-row em {
+.decision-row span, .decision-row b, .order-row span, .order-row b, .order-row .order-status {
     min-width: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -1097,8 +1101,11 @@ button {
     color: #dce7ea
 }
 
-.order-row em {
-    color: #91a4ad
+.order-row .order-status {
+    color: #91a4ad;
+    font-weight: 800;
+    letter-spacing: .02em;
+    text-transform: uppercase
 }
 
 .cell-time {
@@ -1383,22 +1390,6 @@ button {
     line-height: 1.55;
     white-space: pre-wrap;
     overflow-wrap: break-word
-}
-
-.decision-modal-rejection {
-    flex: 0 0 auto;
-    margin-top: 14px;
-    padding: 10px 12px;
-    background: rgba(255, 124, 124, .07);
-    border: 1px solid rgba(255, 124, 124, .28);
-    border-radius: 8px
-}
-
-.decision-modal-rejection p {
-    margin: 0;
-    color: #ffb3b3;
-    font-size: .85rem;
-    line-height: 1.4
 }
 
 @media (max-width: 480px) {
