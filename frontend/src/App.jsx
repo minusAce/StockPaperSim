@@ -307,7 +307,7 @@ export default function App() {
                     </div>
                     <div className="panel-scroll positions-list">
                         <div className="table-head position-head">
-                            <span>SYMBOL</span>
+                            <b>SYMBOL</b>
                             <span>QTY</span>
                             <span>COST</span>
                             <span>PPS</span>
@@ -374,7 +374,7 @@ export default function App() {
                     {decisions.slice(0, 18).map(d =>
                         <div className="decision-row" key={d.id}>
                             <TimeCell ts={d.timestamp}/>
-                            <span>{d.symbol || '—'}</span>
+                            <b>{d.symbol || '—'}</b>
                             <span
                                 className={`decision-action ${(d.action || '').toLowerCase()}`}>{d.action || '—'}</span>
                             <button type="button" className="thesis-btn" onClick={() => setActiveDecision(d)}>
