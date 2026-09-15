@@ -395,11 +395,6 @@ button {
     color: var(--red)
 }
 
-.monitor-row:hover {
-    border-color: #385969;
-    background: #0c1922
-}
-
 .stat-grid {
     display: grid;
     grid-template-columns:1fr 1fr;
@@ -633,7 +628,8 @@ button {
 }
 
 .controls button:hover {
-    background: #0e1c26;
+    background: rgba(0, 0, 0, .16);
+
 }
 
 .controls button:disabled {
@@ -649,7 +645,11 @@ button {
 
 .controls .danger {
     color: var(--red);
-    border-color: #704448
+    background: rgba(255, 124, 124, .08);
+}
+
+.controls button.danger:hover {
+    background: rgba(255, 124, 124, .16);
 }
 
 @keyframes tickerMarquee {
@@ -868,7 +868,7 @@ button {
     gap: 7px;
     padding: 5px 10px;
     background: rgba(114, 217, 238, .08);
-    border: 1px solid rgba(114, 217, 238, .35);
+    border: none;
     border-radius: 10px;
     color: var(--cyan);
     font: inherit;
@@ -881,21 +881,6 @@ button {
 
 .thesis-btn:hover {
     background: rgba(114, 217, 238, .16);
-    border-color: var(--cyan);
-}
-
-.thesis-btn:focus-visible {
-    outline: 2px solid var(--cyan);
-    outline-offset: 2px
-}
-
-.thesis-btn span {
-    display: inline-block;
-    transition: transform .16s ease
-}
-
-.thesis-btn:hover span, .thesis-btn:focus-visible span {
-    transform: translateX(2px)
 }
 
 .cell-time {
