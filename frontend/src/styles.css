@@ -1,9 +1,10 @@
 :root {
-    --topbar-divider: #213641;
+    --divider: #213641;
     font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     color: #eef4f7;
     background: #071018;
     --bg: #071018;
+    --box-bg: #09151d;
     --cyan: #72d9ee;
     --green: #72dda3;
     --amber: #e9c66b;
@@ -30,7 +31,6 @@ html {
 
 body {
     overflow: hidden;
-    background: radial-gradient(circle at top right, #10202b 0%, #08121a 42%, #061019 100%);
     font-size: 16px
 }
 
@@ -58,8 +58,8 @@ button {
     gap: 18px;
     align-items: stretch;
     padding: 9px 18px;
-    border-bottom: 1px solid #304956;
-    background: linear-gradient(180deg, #0b151d 0%, #09121a 100%);
+    border-bottom: 1px solid var(--divider);
+    background: var(--box-bg);
     box-shadow: 0 7px 20px rgba(0, 0, 0, .2);
     z-index: 5
 }
@@ -95,7 +95,7 @@ button {
 }
 
 .topbar-right .topbar-right-metric {
-    border-left: 1px solid var(--topbar-divider)
+    border-left: 1px solid var(--divider)
 }
 
 .topbar-right-metric {
@@ -122,7 +122,7 @@ button {
 .live-engine i {
     width: 8px;
     height: 8px;
-    border-radius: 50%;
+    border-radius: 10px;
     background: currentColor;
 }
 
@@ -146,8 +146,7 @@ button {
     align-items: center;
     text-align: center;
     padding: 0 18px;
-    border-left: 1px solid var(--topbar-divider)
-}
+    border-left: 1px solid var(--divider)}
 
 .metric:first-child {
     border-left: 0
@@ -226,8 +225,8 @@ button {
     justify-content: center;
     overflow: hidden;
     padding: 4px 18px;
-    border-bottom: 1px solid #203640;
-    background: linear-gradient(180deg, #09151d 0%, #08121a 100%);
+    border-bottom: 1px solid var(--divider);
+    background: var(--box-bg);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .02)
 }
 
@@ -255,7 +254,7 @@ button {
     column-gap: 10px;
     padding: 7px 10px;
     border: 0;
-    border-left: 1px solid #2a414d;
+    border-left: 1px solid var(--divider);
     border-radius: 0;
     background: transparent
 }
@@ -299,7 +298,6 @@ button {
 }
 
 .ticker.benchmark-ticker {
-    border-left-color: #2a414d;
     background: transparent;
     box-shadow: none
 }
@@ -314,8 +312,7 @@ button {
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    background: linear-gradient(180deg, #0d1922 0%, #0a151d 100%);
-    border: 1px solid #294451;
+    background: var(--box-bg);
     border-radius: 10px;
     box-shadow: 0 10px 24px var(--shadow), inset 0 1px 0 rgba(255, 255, 255, .02);
     padding: 14px
@@ -324,16 +321,15 @@ button {
 .panel-title {
     flex: 0 0 auto;
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
+    align-content: center;
     gap: 10px;
     color: #f1f5f6;
     font-size: 1.08rem;
-    font-weight: 850;
-    letter-spacing: .02em;
-    padding-bottom: 9px;
-    margin-bottom: 7px;
-    border-bottom: 1px solid #213946
+    font-weight: var(--label-weight);
+    letter-spacing: var(--label-tracking);
+    padding-bottom: 5px;
 }
 
 .panel-title > span {
@@ -382,12 +378,13 @@ button {
 .monitor-row {
     padding: 10px;
     margin: 0 0 5px;
-    border: 1px solid #1c3541;
-    border-radius: 7px;
+    border: 1px solid var(--divider);
+    border-radius: 10px;
     background: #0a151d;
     color: #bfcbd0;
     font-size: .92rem;
-    transition: border-color .16s ease, background .16s ease, box-shadow .16s ease
+    transition: border-color .16s ease, background .16s ease, box-shadow .16s ease;
+    text-align: center;
 }
 
 .monitor-head + .monitor-row {
@@ -401,7 +398,7 @@ button {
 
 .monitor-row.up {
     border-color: rgba(114, 221, 163, .42);
-    background: linear-gradient(90deg, rgba(114, 221, 163, .075), rgba(10, 21, 29, .96) 42%)
+    background: var(--box-bg);
 }
 
 .monitor-row.up b, .monitor-row.up .monitor-price, .monitor-row.up span.up {
@@ -410,7 +407,7 @@ button {
 
 .monitor-row.down {
     border-color: rgba(255, 124, 124, .42);
-    background: linear-gradient(90deg, rgba(255, 124, 124, .075), rgba(10, 21, 29, .96) 42%)
+    background: var(--box-bg);
 }
 
 .monitor-row.down b, .monitor-row.down .monitor-price, .monitor-row.down span.down {
@@ -429,9 +426,8 @@ button {
 }
 
 .stat {
-    background: #0a151d;
-    border: 1px solid #1f3541;
-    border-radius: 7px;
+    background: var(--shadow);
+    border-radius: 10px;
     padding: 10px;
     text-align: center
 }
@@ -467,24 +463,21 @@ button {
     text-align: left
 }
 
-.pos-row {
+.pos-row, .decision-row, .order-row {
     display: grid;
     align-items: center;
-    padding: 9px 10px;
-    background: #0a151d;
-    border-bottom: 1px solid #172a35;
-    font-size: .9rem
+    padding: 10px;
+    background: var(--box-bg);
+    border-bottom: 1px solid var(--divider);
+    font-size: .9rem;
+    text-align: center;
 }
 
-.pos-row b, .pos-row span {
+.pos-row b, .pos-row span, .order-row span, .order-row b, .decision-row span, .decision-row b {
     min-width: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis
-}
-
-.pos-row b {
-    color: #eef4f6
 }
 
 .pos-row .up {
@@ -499,8 +492,8 @@ button {
     padding: 16px 10px;
     color: #627982;
     text-align: center;
-    border: 1px dashed #23404c;
-    border-radius: 7px;
+    border: 1px dashed var(--divider);
+    border-radius: 10px;
     font-size: .92rem
 }
 
@@ -513,7 +506,7 @@ button {
     grid-template-columns:76px 74px minmax(0, 1fr);
     gap: 8px;
     padding: 8px 4px;
-    border-bottom: 1px solid #152a34;
+    border-bottom: 1px solid var(--divider);
     font-size: .9rem;
     line-height: 1.4
 }
@@ -552,9 +545,8 @@ button {
 
 .budget-card {
     padding: 12px;
-    background: #0a151d;
-    border: 1px solid #203b47;
-    border-radius: 8px;
+    background: var(--shadow);
+    border-radius: 10px;
     margin-bottom: 12px
 }
 
@@ -567,7 +559,7 @@ button {
 
 .budget-card span {
     color: var(--label-color);
-    font-size: .78rem;
+    font-size: .76rem;
     letter-spacing: var(--label-tracking);
     font-weight: var(--label-weight)
 }
@@ -581,7 +573,7 @@ button {
     height: 7px;
     margin-top: 9px;
     background: #162630;
-    border-radius: 999px;
+    border-radius: 10px;
     overflow: hidden
 }
 
@@ -600,10 +592,9 @@ button {
 .controls button {
     width: 100%;
     padding: 16px 14px;
-    background: #0a151d;
-    border: 1px solid #2b4754;
-    border-radius: 8px;
-    color: #bfe9f3;
+    background: var(--shadow);
+    border: none;
+    border-radius: 10px;
     font-size: 1rem;
     font-weight: 850;
     cursor: pointer
@@ -611,7 +602,6 @@ button {
 
 .controls button:hover {
     background: #0e1c26;
-    border-color: #4a6875
 }
 
 .controls button:disabled {
@@ -620,13 +610,13 @@ button {
 }
 
 .controls button.primary {
-    border-color: #3e876b;
+    border-color: var(--divider);
     background: #10241f;
     color: #86efb0
 }
 
 .controls .danger {
-    color: #ff9b9b;
+    color: var(--red);
     border-color: #704448
 }
 
@@ -704,9 +694,8 @@ button {
     justify-content: space-between;
     gap: 14px;
     padding: 12px 14px;
-    background: linear-gradient(135deg, #0c1a22 0%, #0a151d 100%);
-    border: 1px solid #284553;
-    border-radius: 8px;
+    background: var(--shadow);
+    border-radius: 10px;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .025)
 }
 
@@ -742,15 +731,6 @@ button {
     font-variant-numeric: tabular-nums
 }
 
-.benchmark-change span {
-    display: block;
-    margin-top: 4px;
-    font-size: .74rem;
-    font-weight: 900;
-    letter-spacing: .08em;
-    color: #8299a3
-}
-
 .benchmark-change.up {
     color: var(--green)
 }
@@ -776,9 +756,8 @@ button {
     min-height: 0;
     height: 100%;
     overflow: hidden;
-    border: 1px solid #284553;
     border-radius: 10px;
-    background: linear-gradient(145deg, #0d1820 0%, #091219 100%);
+    background: var(--box-bg);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, .025)
 }
 
@@ -794,7 +773,7 @@ button {
     margin: auto;
     padding: 20px 24px;
     text-align: center;
-    border: 1px dashed #365968;
+    border: 1px dashed var(--divider);
     border-radius: 10px;
     background: rgba(7, 15, 21, .72);
     box-shadow: 0 12px 32px rgba(0, 0, 0, .22)
@@ -866,7 +845,7 @@ button {
 }
 
 /* Clean table rows */
-.table-head, .decision-row, .order-row {
+.table-head {
     display: grid;
     align-items: center;
     gap: 9px
@@ -876,14 +855,15 @@ button {
     position: sticky;
     top: 0;
     z-index: 2;
-    padding: 8px 10px;
-    background: #0b171f;
-    border-bottom: 1px solid #1f3743;
+    padding: 10px;
+    background: var(--box-bg);
+    border-bottom: 1px solid var(--divider);
     color: var(--label-color);
-    font-size: .62rem;
+    font-size: .61rem;
     font-weight: var(--label-weight);
     letter-spacing: var(--label-tracking);
-    box-shadow: 0 1px 0 #0b171f
+    box-shadow: 0 1px 0 #0b171f;
+    text-align: center;
 }
 
 .decision-head, .decision-row {
@@ -899,19 +879,11 @@ button {
     min-width: 0
 }
 
-.decision-row {
-    min-height: 52px;
-    padding: 8px 10px;
-    border-bottom: 1px solid #142832;
-    font-size: .74rem;
-    background: rgba(8, 18, 25, .42)
+.decision-row:nth-child(even), .order-row:nth-child(even), .pos-row:nth-child(even) {
+    background: var(--shadow);
 }
 
-.decision-row:nth-child(even), .order-row:nth-child(even) {
-    background: rgba(13, 28, 37, .28)
-}
-
-.decision-row span, .decision-row b, .order-row span, .order-row b, .order-row .order-status {
+.order-row .order-status {
     min-width: 0;
     white-space: nowrap;
     overflow: hidden;
@@ -936,17 +908,17 @@ button {
 }
 
 .thesis-btn {
-    justify-self: start;
+    justify-self: center;
     display: inline-flex;
     align-items: center;
     gap: 5px;
-    padding: 5px 11px;
+    padding: 5px 10px;
     background: rgba(114, 217, 238, .08);
     border: 1px solid rgba(114, 217, 238, .35);
-    border-radius: 6px;
+    border-radius: 10px;
     color: var(--cyan);
     font: inherit;
-    font-size: .68rem;
+    font-size: .76rem;
     font-weight: 900;
     letter-spacing: .07em;
     cursor: pointer;
@@ -973,20 +945,6 @@ button {
     transform: translateX(2px)
 }
 
-.order-row {
-    min-height: 52px;
-    margin: 0;
-    padding: 8px 10px;
-    background: transparent;
-    border-bottom: 1px solid #142832;
-    border-radius: 0;
-    font-size: .74rem
-}
-
-.order-row b {
-    color: #dce7ea
-}
-
 .order-row .order-status {
     color: #eef4f7;
     font-weight: 800;
@@ -1002,8 +960,8 @@ button {
 
 .cell-time b {
     color: #dce7ea;
-    font-size: .74rem;
-    font-weight: 800
+    font-size: .76rem;
+    font-weight: var(--label-weight);
 }
 
 .cell-time small {
@@ -1110,12 +1068,10 @@ button {
     max-height: min(640px, 86vh);
     display: flex;
     flex-direction: column;
-    background: linear-gradient(180deg, #0f1c26 0%, #0a151d 100%);
-    border: 1px solid #2c4b59;
-    border-radius: 12px;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, .5), inset 0 1px 0 rgba(255, 255, 255, .03);
-    padding: 22px 24px;
-    overflow: hidden;
+    background: var(--box-bg);
+    border-radius: 10px;
+    padding: 22px;
+    overflow: auto;
     animation: modalPopIn .18s ease
 }
 
@@ -1128,8 +1084,8 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid #2b4754;
-    border-radius: 8px;
+    border: 1px solid var(--divider);
+    border-radius: 10px;
     background: #0a151d;
     color: #9db3bd;
     font-size: 1.1rem;
@@ -1186,8 +1142,8 @@ button {
 .decision-action-badge {
     flex: 0 0 auto;
     padding: 5px 10px;
-    border-radius: 6px;
-    font-size: .72rem;
+    border-radius: 10px;
+    font-size: .76rem;
     font-weight: 900;
     letter-spacing: .07em
 }
@@ -1215,27 +1171,10 @@ button {
     margin: 18px 0
 }
 
-.decision-modal-meta div {
-    min-width: 0;
-    background: #0a151d;
-    border: 1px solid #1f3541;
-    border-radius: 8px;
-    padding: 10px 12px
-}
-
-.decision-modal-meta b {
-    display: block;
-    color: #eef4f6;
-    font-size: .95rem;
-    font-variant-numeric: tabular-nums;
-    line-height: 1.3;
-    overflow-wrap: break-word
-}
-
-.decision-modal-label, .decision-modal-meta span {
+.decision-modal-label {
     display: block;
     color: var(--label-color);
-    font-size: .68rem;
+    font-size: .76rem;
     font-weight: var(--label-weight);
     letter-spacing: var(--label-tracking);
     margin-bottom: 6px
@@ -1250,7 +1189,6 @@ button {
 
 .decision-modal-thesis p {
     margin: 0;
-    color: #d3dee3;
     font-size: .95rem;
     line-height: 1.55;
     white-space: pre-wrap;
@@ -1305,7 +1243,7 @@ button {
     width: 8px;
     height: 8px;
     flex: 0 0 8px;
-    border-radius: 50%;
+    border-radius: 10px;
     display: block;
     background: currentColor;
 }
@@ -1313,7 +1251,7 @@ button {
 .realtime-main span {
     display: block;
     color: currentColor;
-    font-size: .66rem;
+    font-size: .76rem;
     font-weight: var(--label-weight);
     letter-spacing: var(--label-tracking);
     line-height: 1;
@@ -1339,7 +1277,6 @@ button {
 }
 
 .realtime-last b {
-    color: #e9f1f4;
     font-size: .66rem;
     font-weight: 800;
     margin: 0;

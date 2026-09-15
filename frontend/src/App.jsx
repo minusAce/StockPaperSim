@@ -28,11 +28,7 @@ const prettyStatus = s => {
 
 
 function StaffScene({agents}) {
-    return <div
-        className="staff-stage"
-        data-agent-count={agents.length}
-        aria-label={`AI Staff visual stage ready for the PixiJS scene (${agents.length} agents connected)`}
-    >
+    return <div className="staff-stage" data-agent-count={agents.length}>
         <div className="staff-stage-status">
             <span>AI STAFF DATA LINK</span>
             <b>{agents.length} AGENTS CONNECTED</b>
@@ -232,12 +228,11 @@ export default function App() {
                 <Metric label="FILLED" value={performance.filled_orders ?? 0} className="filled-value"/>
             </div>
             <div className="topbar-right">
-                <div className={`live-engine ${engineState}`} aria-label={`Engine status: ${engineState}`}>
+                <div className={`live-engine ${engineState}`}>
                     <i/> <span>{engineState === 'killed' ? 'KILLED' : engineState === 'live' ? 'LIVE' : 'PAUSED'}</span>
                 </div>
                 <div className={`metric topbar-right-metric realtime-status ${marketDataClass}`}
-                     title={lastUpdateAt ? `Last update ${lastUpdateAt.toLocaleTimeString()}` : 'Waiting for market data'}
-                     aria-label={`Market data: ${wsState}`}>
+                     title={lastUpdateAt ? `Last update ${lastUpdateAt.toLocaleTimeString()}` : 'Waiting for market data'}>
                     <div className="realtime-main"><i/> <span>MARKET DATA</span></div>
                     <div className="realtime-last">LAST
                         UPDATE <b>{lastUpdateAt ? lastUpdateAt.toLocaleTimeString() : '—'}</b></div>
@@ -311,12 +306,12 @@ export default function App() {
                         <Stat label="BUYING POWER" v={money(portfolio.buying_power)}/>
                     </div>
                     <div className="panel-scroll positions-list">
-                        <div className="table-head position-head" aria-hidden="true">
+                        <div className="table-head position-head">
                             <span>SYMBOL</span>
-                            <span>SHARES</span>
-                            <span>PORTFOLIO</span>
-                            <span>COST / SHARE</span>
-                            <span>G/L / SHARE</span>
+                            <span>QTY</span>
+                            <span>COST</span>
+                            <span>PPS</span>
+                            <span>PER-SH G/L</span>
                             <span>G/L</span>
                         </div>
                         {(portfolio.positions || []).map(p => {
@@ -375,17 +370,15 @@ export default function App() {
                 <PanelTitle>DECISION BOOK</PanelTitle>
                 <div className="panel-scroll scroll-pane standalone-table">
                     <div className="table-head decision-head">
-                        <span>TIME</span><span>DECISION</span><span>SYMBOL</span><span>THESIS</span></div>
+                        <span>TIME</span><span>SYMBOL</span><span>B/S</span><span>THESIS</span></div>
                     {decisions.slice(0, 18).map(d =>
                         <div className="decision-row" key={d.id}>
                             <TimeCell ts={d.timestamp}/>
+                            <span>{d.symbol || '—'}</span>
                             <span
                                 className={`decision-action ${(d.action || '').toLowerCase()}`}>{d.action || '—'}</span>
-                            <span>{d.symbol || '—'}</span>
-                            <button type="button" className="thesis-btn" onClick={() => setActiveDecision(d)}
-                                    aria-haspopup="dialog"
-                                    aria-label={`View thesis for ${d.symbol || 'this decision'}`}>
-                                VIEW<span aria-hidden="true">›</span>
+                            <button type="button" className="thesis-btn" onClick={() => setActiveDecision(d)}>
+                                VIEW
                             </button>
                         </div>
                     )}
@@ -397,12 +390,16 @@ export default function App() {
                 <PanelTitle>BROKER ORDERS</PanelTitle>
                 <div className="panel-scroll scroll-pane standalone-table">
                     <div className="table-head order-head">
-                        <span>TIME</span><span>SYMBOL</span><span>SIDE</span><span>QTY</span><span>STATUS</span></div>
-                    {orders.slice(0, 18).map((o, i) => <div className="order-row" key={o.id || i}><TimeCell
-                        ts={o.timestamp}/><b>{o.symbol || '—'}</b><span
-                        className={`order-side ${(o.action || '').toLowerCase()}`}>{o.action || '—'}</span><span>{Number(o.qty || 0).toLocaleString()}</span><span
-                        className="order-status">{prettyStatus(o.status)}</span>
-                    </div>)}
+                        <span>TIME</span><span>SYMBOL</span><span>QTY</span><span>B/S</span><span>STATUS</span>
+                    </div>
+                    {orders.slice(0, 18).map((o, i) =>
+                        <div className="order-row" key={o.id || i}>
+                            <TimeCell ts={o.timestamp}/><b>{o.symbol || '—'}</b>
+                            <span>{Number(o.qty || 0).toLocaleString()}</span>
+                            <span className={`order-side ${(o.action || '').toLowerCase()}`}>{o.action || '—'}</span>
+                            <span className="order-status">{prettyStatus(o.status)}</span>
+                        </div>)
+                    }
                     {!orders.length && <div className="empty">NO ORDERS YET</div>}
                 </div>
             </section>
@@ -446,9 +443,8 @@ function DecisionModal({decision, onClose}) {
     const thesisText = d.thesis || d.reason || d.rejection_reason || 'No thesis was recorded for this decision.'
 
     return <div className="modal-overlay" onClick={onClose}>
-        <div className="modal-card decision-modal" role="dialog" aria-modal="true"
-             aria-labelledby="decision-modal-symbol" onClick={e => e.stopPropagation()}>
-            <button className="modal-close" onClick={onClose} aria-label="Close">
+        <div className="modal-card decision-modal" role="dialog" onClick={e => e.stopPropagation()}>
+            <button className="modal-close" onClick={onClose}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                      strokeWidth="2.5" strokeLinecap="round">
                     <line x1="4" y1="4" x2="20" y2="20"/>
@@ -460,9 +456,14 @@ function DecisionModal({decision, onClose}) {
                 <h3 id="decision-modal-symbol">{d.symbol || '—'}</h3>
             </div>
             <div className="decision-modal-meta">
-                <div><span>WHEN</span>{dt ? <b>{fmtDateFull(dt)} {fmtTimeFull(dt)}</b> : <b>—</b>}
+                <div class="stat">
+                    <span>WHEN</span>
+                    {dt ? <b>{fmtDateFull(dt)} {fmtTimeFull(dt)}</b> : <b>—</b>}
                 </div>
-                <div><span>CONFIDENCE</span><b>{confPct(d.confidence)}</b></div>
+                <div class="stat">
+                    <span>CONFIDENCE</span>
+                    <b>{confPct(d.confidence)}</b>
+                </div>
             </div>
             <div className="decision-modal-thesis">
                 <span className="decision-modal-label">THESIS</span>
