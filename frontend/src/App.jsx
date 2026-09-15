@@ -278,10 +278,10 @@ export default function App() {
             </section>
 
             <section className="panel market">
-                <PanelTitle aside="TOP MOVERS (TODAY)">MARKET MONITOR</PanelTitle>
+                <PanelTitle>TOP MOVERS</PanelTitle>
                 <div className="benchmark-banner">
                     <div>
-                        <span className="benchmark-label">BENCHMARK · {benchmark.symbol || 'S&P 500'}</span>
+                        <span className="benchmark-label">{benchmark.symbol || 'S&P 500'}</span>
                         <strong>{benchmark.price ? money(benchmark.price) : '—'}</strong>
                     </div>
                     <div className={`benchmark-change ${benchmarkClass}`}>
@@ -291,7 +291,7 @@ export default function App() {
                 </div>
                 <div className="panel-scroll monitor-table">
                     <div className="table-head monitor-head">
-                        <span>SYMBOL</span><span>PRICE</span><span>TODAY</span><span>VOLUME</span><span>SCORE</span>
+                        <span>SYMBOL</span><span>PRICE</span><span>DAY CHG</span><span>VOLUME</span><span>SCORE</span>
                     </div>
                     {candidates.slice(0, 18).map(c => {
                         const direction = movementClass(c.change_pct);
@@ -306,10 +306,10 @@ export default function App() {
             <div className="portfolio-controls-stack">
                 <section className="panel portfolio">
                     <PanelTitle>PORTFOLIO</PanelTitle>
-                    <div className="stat-grid"><Stat label="CASH" v={money(portfolio.cash)}/><Stat label="BUYING POWER"
-                                                                                                   v={money(portfolio.buying_power)}/>
+                    <div className="stat-grid">
+                        <Stat label="CASH" v={money(portfolio.cash)}/>
+                        <Stat label="BUYING POWER" v={money(portfolio.buying_power)}/>
                     </div>
-                    <div className="subhead">OPEN POSITIONS</div>
                     <div className="panel-scroll positions-list">
                         <div className="table-head position-head" aria-hidden="true">
                             <span>SYMBOL</span>
