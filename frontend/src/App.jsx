@@ -450,15 +450,19 @@ function DecisionModal({decision, onClose}) {
     return <div className="modal-overlay" onClick={onClose}>
         <div className="modal-card decision-modal" role="dialog" aria-modal="true"
              aria-labelledby="decision-modal-symbol" onClick={e => e.stopPropagation()}>
-            <button className="modal-close" onClick={onClose} aria-label="Close">×</button>
+            <button className="modal-close" onClick={onClose} aria-label="Close">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                     strokeWidth="2.5" strokeLinecap="round">
+                    <line x1="4" y1="4" x2="20" y2="20"/>
+                    <line x1="20" y1="4" x2="4" y2="20"/>
+                </svg>
+            </button>
             <div className="decision-modal-header">
                 <span className={`decision-action-badge ${action.toLowerCase()}`}>{action}</span>
                 <h3 id="decision-modal-symbol">{d.symbol || '—'}</h3>
-                <span
-                    className={`decision-status-pill ${d.approved ? 'ok' : 'bad'}`}>{d.approved ? 'APPROVED' : 'REJECTED'}</span>
             </div>
             <div className="decision-modal-meta">
-                <div><span>WHEN</span>{dt ? <><b>{fmtDateFull(dt)}</b><small>{fmtTimeFull(dt)}</small></> : <b>—</b>}
+                <div><span>WHEN</span>{dt ? <b>{fmtDateFull(dt)} {fmtTimeFull(dt)}</b> : <b>—</b>}
                 </div>
                 <div><span>CONFIDENCE</span><b className={d.approved ? 'ok' : 'bad'}>{confPct(d.confidence)}</b></div>
             </div>

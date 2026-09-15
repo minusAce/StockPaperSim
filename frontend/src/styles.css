@@ -520,7 +520,7 @@ button {
 
 .position-head, .pos-row {
     grid-template-columns:minmax(0, .8fr) minmax(0, .72fr) minmax(0, 1.05fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, .9fr);
-    gap: 8px
+    gap: 9px
 }
 
 .position-head {
@@ -530,7 +530,7 @@ button {
 .pos-row {
     display: grid;
     align-items: center;
-    padding: 9px 6px;
+    padding: 9px 10px;
     background: #0a151d;
     border-bottom: 1px solid #172a35;
     font-size: .9rem
