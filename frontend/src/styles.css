@@ -9,6 +9,9 @@
     --amber: #e9c66b;
     --red: #ff7c7c;
     --shadow: rgba(0, 0, 0, .28);
+    --label-color: #7f95a1;
+    --label-weight: 850;
+    --label-tracking: .08em;
 }
 
 * {
@@ -121,7 +124,6 @@ button {
     height: 8px;
     border-radius: 50%;
     background: currentColor;
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, .045), 0 0 12px currentColor
 }
 
 .live-engine.live {
@@ -153,10 +155,10 @@ button {
 
 .metric span {
     display: block;
-    color: #7f95a1;
+    color: var(--label-color);
     font-size: .75rem;
-    font-weight: 850;
-    letter-spacing: .1em;
+    font-weight: var(--label-weight);
+    letter-spacing: var(--label-tracking);
     line-height: 1
 }
 
@@ -210,9 +212,10 @@ button {
 
 .clock span {
     display: block;
-    color: #7f95a1;
+    color: var(--label-color);
     font-size: .66rem;
-    letter-spacing: .11em;
+    font-weight: var(--label-weight);
+    letter-spacing: var(--label-tracking);
     margin-bottom: 5px
 }
 
@@ -305,18 +308,6 @@ button {
     color: var(--cyan)
 }
 
-.floor-grid {
-    flex: 1 1 auto;
-    min-height: 0;
-    display: grid;
-    grid-template-columns:minmax(310px, 1.05fr) minmax(400px, 1.22fr) minmax(300px, .92fr);
-    grid-template-rows:minmax(0, 1fr) minmax(0, 1fr);
-    grid-template-areas:"staff market portfolio" "squawk decisions controls";
-    gap: 12px;
-    padding: 12px 14px 14px;
-    overflow: hidden
-}
-
 .panel {
     min-width: 0;
     min-height: 0;
@@ -349,13 +340,6 @@ button {
     min-width: 0
 }
 
-.panel-title em {
-    font-style: normal;
-    color: #7f95a1;
-    font-size: .72rem;
-    font-weight: 850;
-    letter-spacing: .08em
-}
 
 .staff {
     grid-area: staff
@@ -365,20 +349,12 @@ button {
     grid-area: market
 }
 
-.portfolio {
-    grid-area: portfolio
-}
-
 .squawk {
     grid-area: squawk
 }
 
 .decisions {
     grid-area: decisions
-}
-
-.controls {
-    grid-area: controls
 }
 
 .panel-scroll {
@@ -462,10 +438,10 @@ button {
 
 .stat span {
     display: block;
-    color: #78909b;
+    color: var(--label-color);
     font-size: .76rem;
-    letter-spacing: .05em;
-    font-weight: 850;
+    letter-spacing: var(--label-tracking);
+    font-weight: var(--label-weight);
     text-align: center
 }
 
@@ -574,14 +550,6 @@ button {
     overflow-x: hidden
 }
 
-.ok {
-    color: var(--green)
-}
-
-.bad {
-    color: var(--red)
-}
-
 .budget-card {
     padding: 12px;
     background: #0a151d;
@@ -598,10 +566,10 @@ button {
 }
 
 .budget-card span {
-    color: #7f97a1;
+    color: var(--label-color);
     font-size: .78rem;
-    letter-spacing: .07em;
-    font-weight: 900
+    letter-spacing: var(--label-tracking);
+    font-weight: var(--label-weight)
 }
 
 .budget-card b {
@@ -703,49 +671,7 @@ button {
     }
 }
 
-@media (max-width: 900px) {
-    body {
-        font-size: 15px
-    }
-
-    .topbar {
-        grid-template-columns:1fr auto;
-        gap: 10px
-    }
-
-    .topbar-center .metric {
-        display: none
-    }
-
-    .topbar-right {
-        gap: 8px
-    }
-
-    .floor-grid {
-        grid-template-columns:1fr;
-        grid-template-rows:repeat(6, minmax(280px, 1fr));
-        grid-template-areas:"staff" "market" "portfolio" "squawk" "decisions" "controls";
-        overflow: auto
-    }
-
-    .app-shell {
-        overflow: hidden
-    }
-
-    .panel {
-        min-height: 280px
-    }
-
-    .ticker-bar {
-        padding-inline: 8px
-    }
-}
-
 @media (max-width: 620px) {
-    .topbar {
-        grid-template-columns:1fr auto
-    }
-
     .clock {
         display: none
     }
@@ -790,10 +716,10 @@ button {
 
 .benchmark-label {
     display: block;
-    color: #7f97a2;
+    color: var(--label-color);
     font-size: .76rem;
-    font-weight: 850;
-    letter-spacing: .05em
+    font-weight: var(--label-weight);
+    letter-spacing: var(--label-tracking)
 }
 
 .benchmark-banner strong {
@@ -876,10 +802,10 @@ button {
 
 .staff-stage-status span {
     display: block;
-    color: #6f8995;
+    color: var(--label-color);
     font-size: .7rem;
-    font-weight: 900;
-    letter-spacing: .11em
+    font-weight: var(--label-weight);
+    letter-spacing: var(--label-tracking)
 }
 
 .staff-stage-status b {
@@ -897,13 +823,18 @@ button {
     font-size: .74rem
 }
 
-/* Desktop floor layout */
 .floor-grid {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: grid;
     grid-template-columns:minmax(440px, 1.75fr) minmax(240px, .95fr) minmax(240px, .95fr) minmax(300px, 1.15fr);
     grid-template-rows:minmax(0, 1fr) minmax(0, 1fr);
     grid-template-areas:
-    "staff staff market rightstack"
-    "squawk decisions broker rightstack";
+        "staff staff market rightstack"
+        "squawk decisions broker rightstack";
+    gap: 12px;
+    padding: 12px 14px 14px;
+    overflow: hidden
 }
 
 .portfolio-controls-stack {
@@ -923,10 +854,6 @@ button {
 .portfolio-controls-stack .controls {
     flex: 0 0 auto;
     height: fit-content;
-}
-
-.decisions {
-    grid-area: decisions
 }
 
 .broker-orders {
@@ -952,10 +879,10 @@ button {
     padding: 8px 10px;
     background: #0b171f;
     border-bottom: 1px solid #1f3743;
-    color: #748b96;
+    color: var(--label-color);
     font-size: .62rem;
-    font-weight: 900;
-    letter-spacing: .08em;
+    font-weight: var(--label-weight);
+    letter-spacing: var(--label-tracking);
     box-shadow: 0 1px 0 #0b171f
 }
 
@@ -968,7 +895,7 @@ button {
     grid-template-columns:minmax(0, 1.2fr) minmax(0, 1fr) minmax(0, .8fr) minmax(0, .7fr) minmax(0, 1.1fr)
 }
 
-.position-head span, .pos-row span, .pos-row b {
+.position-head span {
     min-width: 0
 }
 
@@ -1099,6 +1026,44 @@ button {
 }
 
 @media (max-width: 900px) {
+    .topbar {
+        grid-template-columns:1fr auto;
+        gap: 10px
+    }
+
+    .topbar-center .metric {
+        display: none
+    }
+
+    .topbar-right {
+        gap: 8px;
+        width: auto;
+        min-width: max-content;
+        max-width: none
+    }
+
+    .realtime-status {
+        width: 198px;
+        min-width: 198px
+    }
+
+    .clock {
+        width: 118px;
+        min-width: 118px
+    }
+
+    .app-shell {
+        overflow: hidden
+    }
+
+    .panel {
+        min-height: 280px
+    }
+
+    .ticker-bar {
+        padding-inline: 8px
+    }
+
     .position-head > *:nth-child(4), .pos-row > *:nth-child(4),
     .position-head > *:nth-child(5), .pos-row > *:nth-child(5) {
         display: none
@@ -1120,7 +1085,6 @@ button {
     }
 
     .decision-head, .decision-row {
-        grid-template-columns:minmax(0, 1fr) minmax(0, 1fr) minmax(0, .85fr) minmax(0, 1.3fr);
         gap: 10px
     }
 }
@@ -1243,25 +1207,6 @@ button {
     background: var(--amber)
 }
 
-.decision-status-pill {
-    flex: 0 0 auto;
-    margin-left: auto;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: .66rem;
-    font-weight: 900;
-    letter-spacing: .08em;
-    border: 1px solid currentColor
-}
-
-.decision-status-pill.ok {
-    color: var(--green)
-}
-
-.decision-status-pill.bad {
-    color: var(--red)
-}
-
 .decision-modal-meta {
     flex: 0 0 auto;
     display: grid;
@@ -1278,37 +1223,6 @@ button {
     padding: 10px 12px
 }
 
-.decision-modal-meta.sell-meta {
-    grid-template-columns:repeat(4, minmax(0, 1fr))
-}
-
-.decision-modal-sell {
-    flex: 0 0 auto;
-    margin-top: 14px;
-    padding: 10px 12px;
-    background: rgba(255, 124, 124, .07);
-    border: 1px solid rgba(255, 124, 124, .22);
-    border-radius: 8px
-}
-
-.decision-modal-sell p {
-    margin: 0;
-    color: #ffd0d0;
-    font-size: .88rem;
-    line-height: 1.45;
-    white-space: pre-wrap;
-    overflow-wrap: break-word
-}
-
-.decision-modal-meta span {
-    display: block;
-    color: #78909b;
-    font-size: .68rem;
-    font-weight: 850;
-    letter-spacing: .08em;
-    margin-bottom: 4px
-}
-
 .decision-modal-meta b {
     display: block;
     color: #eef4f6;
@@ -1318,20 +1232,12 @@ button {
     overflow-wrap: break-word
 }
 
-.decision-modal-meta small {
+.decision-modal-label, .decision-modal-meta span {
     display: block;
-    margin-top: 2px;
-    color: #8ba0aa;
-    font-size: .8rem;
-    font-variant-numeric: tabular-nums
-}
-
-.decision-modal-label {
-    display: block;
-    color: #78909b;
+    color: var(--label-color);
     font-size: .68rem;
-    font-weight: 850;
-    letter-spacing: .08em;
+    font-weight: var(--label-weight);
+    letter-spacing: var(--label-tracking);
     margin-bottom: 6px
 }
 
@@ -1360,7 +1266,7 @@ button {
         padding: 18px 16px
     }
 
-    .decision-modal-meta, .decision-modal-meta.sell-meta {
+    .decision-modal-meta {
         grid-template-columns:1fr
     }
 }
@@ -1372,23 +1278,6 @@ button {
     line-height: 1
 }
 
-@media (max-width: 900px) {
-    .topbar-right {
-        width: auto;
-        min-width: max-content;
-        max-width: none
-    }
-
-    .realtime-status {
-        width: 198px;
-        min-width: 198px
-    }
-
-    .clock {
-        width: 118px;
-        min-width: 118px
-    }
-}
 
 .realtime-status {
     display: grid;
@@ -1419,15 +1308,14 @@ button {
     border-radius: 50%;
     display: block;
     background: currentColor;
-    box-shadow: 0 0 0 3px rgba(255, 255, 255, .045), 0 0 12px currentColor
 }
 
 .realtime-main span {
     display: block;
     color: currentColor;
     font-size: .66rem;
-    font-weight: 900;
-    letter-spacing: .11em;
+    font-weight: var(--label-weight);
+    letter-spacing: var(--label-tracking);
     line-height: 1;
     white-space: nowrap;
     text-align: center
@@ -1441,10 +1329,10 @@ button {
     width: 100%;
     padding-inline: 2px;
     margin-top: 6px;
-    color: #7f95a1;
+    color: var(--label-color);
     font-size: .66rem;
-    font-weight: 900;
-    letter-spacing: .11em;
+    font-weight: var(--label-weight);
+    letter-spacing: var(--label-tracking);
     line-height: 1;
     white-space: nowrap;
     text-align: center

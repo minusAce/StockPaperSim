@@ -417,14 +417,12 @@ function Metric({label, value, className = ''}) {
     return <div className="metric"><span>{label}</span><b className={className}>{value}</b></div>
 }
 
-function Stat({label, v, cls = ''}) {
-    return <div className="stat"><span>{label}</span><b className={cls}>{v}</b></div>
+function Stat({label, v}) {
+    return <div className="stat"><span>{label}</span><b>{v}</b></div>
 }
 
-function PanelTitle({children, aside = ''}) {
-    return <div className="panel-title"><span>{children}</span>
-        <div className="panel-title-actions">{aside && <em>{aside}</em>}<i/></div>
-    </div>
+function PanelTitle({children}) {
+    return <div className="panel-title"><span>{children}</span></div>
 }
 
 function TimeCell({ts}) {
